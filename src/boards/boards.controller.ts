@@ -8,22 +8,22 @@ import { ModifyBoardDto } from './dto/modify_board.dto';
 export class BoardsController {
   constructor(private BoardsService: BoardsService) {}
 
-  @Get('/getAll')
+  @Get('/')
   getAll(): Json {
     return this.BoardsService.getAll();
   }
 
-  @Get('/getOne/:id')
+  @Get('/:id')
   getOne(@Param('id') id: string): Json {
     return this.BoardsService.getOne(id);
   }
 
-  @Post('/create')
+  @Post('/')
   create(@Body() createBoardDto: CreateBoardDto): Json {
     return this.BoardsService.create(createBoardDto);
   }
 
-  @Patch('/modify/:id')
+  @Patch('/:id')
   modify(
     @Body('title') title: string,
     @Body('description') description: string,
