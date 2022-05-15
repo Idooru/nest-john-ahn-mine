@@ -61,7 +61,16 @@ export class BoardsService {
 
     return {
       code: 201,
-      message: 'Sucess to modify Board',
+      message: `Sucess to modify Board by ${id}`,
+    };
+  }
+
+  remove(id: string): Json {
+    this.boards = this.boards.filter((board) => board.id !== id);
+
+    return {
+      code: 200,
+      message: `Sucess to remove Board by ${id}`,
     };
   }
 }

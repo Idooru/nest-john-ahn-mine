@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Delete,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Json } from './interface/boards.res';
 import { CreateBoardDto } from './dto/create_board.dto';
@@ -30,5 +38,10 @@ export class BoardsController {
     @Param('id') id: string,
   ): Json {
     return this.BoardsService.modify(title, description, id);
+  }
+
+  @Delete('/:id')
+  remove(@Param('id') id: string): Json {
+    return this.BoardsService.remove(id);
   }
 }
