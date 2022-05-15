@@ -3,7 +3,10 @@ import { Board, BoardStatus } from './interface/boards.model';
 import { v1 as uuid } from 'uuid';
 import { Json } from './interface/boards.res';
 import { CreateBoardDto } from './dto/create_board.dto';
-import { ModifyBoardDto } from './dto/modify_board.dto';
+import {
+  ModifyBoardDtoBody,
+  ModifyBoardDtoParam,
+} from './dto/modify_board.dto';
 
 @Injectable()
 export class BoardsService {
@@ -45,8 +48,13 @@ export class BoardsService {
     };
   }
 
-  modify(title: string, description: string, id: string): Json {
-    const filtering = this.boards.find((idx) => idx.id === id);
+  modify(
+    modifyBoardDtoBody: ModifyBoardDtoBody,
+    modifyBoardDtoParam: ModifyBoardDtoParam,
+  ): Json {
+    const { title, description, status } = modifyBoardDtoBody;
+    const { id } = modifyBoardDtoParam;
+    const filtering = this.boards.find((board) => board.id === id);
 
     if (!filtering) {
       return {
@@ -58,6 +66,7 @@ export class BoardsService {
     const index = this.boards.indexOf(filtering);
     this.boards[index].title = title;
     this.boards[index].description = description;
+    this.boards[index].status = status;
 
     return {
       code: 201,

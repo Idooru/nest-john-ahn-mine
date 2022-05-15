@@ -10,7 +10,10 @@ import {
 import { BoardsService } from './boards.service';
 import { Json } from './interface/boards.res';
 import { CreateBoardDto } from './dto/create_board.dto';
-import { ModifyBoardDto } from './dto/modify_board.dto';
+import {
+  ModifyBoardDtoBody,
+  ModifyBoardDtoParam,
+} from './dto/modify_board.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -33,11 +36,10 @@ export class BoardsController {
 
   @Patch('/:id')
   modify(
-    @Body('title') title: string,
-    @Body('description') description: string,
-    @Param('id') id: string,
+    @Body() modifyBoardDtoBody: ModifyBoardDtoBody,
+    @Param() modifyBoardDtoParam: ModifyBoardDtoParam,
   ): Json {
-    return this.BoardsService.modify(title, description, id);
+    return this.BoardsService.modify(modifyBoardDtoBody, modifyBoardDtoParam);
   }
 
   @Delete('/:id')
