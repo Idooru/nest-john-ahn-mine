@@ -1,17 +1,20 @@
-import { PipeTransform, BadRequestException } from '@nestjs/common';
-import { BoardStatus, InputBoardStatus } from '../interface/boards.model';
+import { BadRequestException, PipeTransform } from '@nestjs/common';
+import { InputBoardStatus } from '../interface/boards.model';
+import { BoardStatus } from '../interface/boards.model';
 
 export class BoardStatusValidationPipe implements PipeTransform {
-  readonly StatusOptions = [BoardStatus.PRIVATE, BoardStatus.PUBLIC];
+  readonly StatusOptions = [BoardStatus.PUBLIC, BoardStatus.PRIVATE];
 
-  transform(input: InputBoardStatus) {
-    const upper = input.status.toUpperCase();
+  transform(value: InputBoardStatus) {
+    const upper = value.status.toUpperCase();
 
     if (!this.isStatusValid(upper)) {
-      throw new BadRequestException(`Validation Fail, ${upper} is not exist`);
+      throw new BadRequestException(
+        `Validation Fail, ${value.status} is not exist`,
+      );
     }
 
-    return input;
+    return value;
   }
 
   private isStatusValid(upper: any) {
