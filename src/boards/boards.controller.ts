@@ -6,14 +6,19 @@ import {
   Patch,
   Post,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Json } from './interface/boards.res';
-import { CreateBoardDto } from './dto/create_board.dto';
+import { GetOneDtoParam } from './dto/getOne_board.dto';
+import { CreateBoardDtoParam } from './dto/create_board.dto';
 import {
   ModifyBoardDtoBody,
   ModifyBoardDtoParam,
 } from './dto/modify_board.dto';
+import { RemoveBoardDtoParam } from './dto/remove-boards.dto';
+import { BoardStatusValidationPipe } from './pipes/modify_validation.pipe';
 
 @Controller('boards')
 export class BoardsController {
@@ -25,25 +30,29 @@ export class BoardsController {
   }
 
   @Get('/:id')
-  getOne(@Param('id') id: string): Json {
-    return this.BoardsService.getOne(id);
+  @UsePipes(ValidationPipe)
+  getOne(@Param() getOneDtoParam: GetOneDtoParam): Json {
+    return this.BoardsService.getOne(getOneDtoParam);
   }
 
   @Post('/')
-  create(@Body() createBoardDto: CreateBoardDto): Json {
+  @UsePipes(ValidationPipe)
+  create(@Body() createBoardDto: CreateBoardDtoParam): Json {
     return this.BoardsService.create(createBoardDto);
   }
 
-  @Patch('/:id')
+  @Patch('/:id/fix')
+  @UsePipes(ValidationPipe)
   modify(
-    @Body() modifyBoardDtoBody: ModifyBoardDtoBody,
+    @Body(BoardStatusValidationPipe) modifyBoardDtoBody: ModifyBoardDtoBody,
     @Param() modifyBoardDtoParam: ModifyBoardDtoParam,
   ): Json {
     return this.BoardsService.modify(modifyBoardDtoBody, modifyBoardDtoParam);
   }
 
   @Delete('/:id')
-  remove(@Param('id') id: string): Json {
-    return this.BoardsService.remove(id);
+  @UsePipes(ValidationPipe)
+  remove(@Param() removeBoardDtoParam: RemoveBoardDtoParam): Json {
+    return this.BoardsService.remove(removeBoardDtoParam);
   }
 }

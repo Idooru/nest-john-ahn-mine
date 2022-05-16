@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Board, BoardStatus } from './interface/boards.model';
 import { v1 as uuid } from 'uuid';
 import { Json } from './interface/boards.res';
-import { CreateBoardDto } from './dto/create_board.dto';
+import { CreateBoardDtoParam } from './dto/create_board.dto';
+import { RemoveBoardDtoParam } from './dto/remove-boards.dto';
+import { GetOneDtoParam } from './dto/getOne_board.dto';
 import {
   ModifyBoardDtoBody,
   ModifyBoardDtoParam,
@@ -13,25 +15,36 @@ export class BoardsService {
   private boards: Board[] = [];
 
   getAll(): Json {
+    if (!this.boards.length) {
+      throw new NotFoundException('Fail to get boards, The board are empty');
+    }
+
     return {
-      code: 200,
-      message: 'Sucess to get Boards',
+      statusCode: 200,
+      message: 'Sucess to get boards',
       result: this.boards,
     };
   }
 
-  getOne(id: string): Json {
+  getOne(getOneDtoParam: GetOneDtoParam): Json {
+    const { id } = getOneDtoParam;
     const board: Board = this.boards.find((board) => board.id === id);
 
+    if (!board) {
+      throw new NotFoundException(
+        `Fail to get board by ${id}, The id is not exist`,
+      );
+    }
+
     return {
-      code: 200,
-      message: `Sucess to get Board By ${id}`,
+      statusCode: 200,
+      message: `Sucess to get board by ${id}`,
       result: board,
     };
   }
 
-  create(createBoardDto: CreateBoardDto): Json {
-    const { title, description } = createBoardDto;
+  create(createBoardDtoParam: CreateBoardDtoParam): Json {
+    const { title, description } = createBoardDtoParam;
     const board: Board = {
       id: uuid(),
       title,
@@ -42,7 +55,7 @@ export class BoardsService {
     this.boards.push(board);
 
     return {
-      code: 201,
+      statusCode: 201,
       message: 'Sucess to create Board',
       result: board,
     };
@@ -57,10 +70,9 @@ export class BoardsService {
     const filtering = this.boards.find((board) => board.id === id);
 
     if (!filtering) {
-      return {
-        code: 401,
-        message: 'Failed to modify Board, The id is not correct',
-      };
+      throw new NotFoundException(
+        `Fail to modify board by ${id}, The is is not exist`,
+      );
     }
 
     const index = this.boards.indexOf(filtering);
@@ -69,16 +81,17 @@ export class BoardsService {
     this.boards[index].status = status;
 
     return {
-      code: 201,
+      statusCode: 201,
       message: `Sucess to modify Board by ${id}`,
     };
   }
 
-  remove(id: string): Json {
+  remove(removeBoardDtoParam: RemoveBoardDtoParam): Json {
+    const { id } = removeBoardDtoParam;
     this.boards = this.boards.filter((board) => board.id !== id);
 
     return {
-      code: 200,
+      statusCode: 200,
       message: `Sucess to remove Board by ${id}`,
     };
   }

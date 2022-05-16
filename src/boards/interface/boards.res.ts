@@ -1,5 +1,5 @@
 export interface Json {
-  code: number;
+  statusCode: number;
   message: string;
-  result?: any;
+  result?: unknown;
 }
