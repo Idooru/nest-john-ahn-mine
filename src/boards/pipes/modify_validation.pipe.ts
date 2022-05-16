@@ -9,9 +9,7 @@ export class BoardStatusValidationPipe implements PipeTransform {
     const upper = value.status.toUpperCase();
 
     if (!this.isStatusValid(upper)) {
-      throw new BadRequestException(
-        `Validation Fail, ${value.status} is not exist`,
-      );
+      throw new BadRequestException(`Validation Fail, ${value} is not exist`);
     }
 
     return value;
